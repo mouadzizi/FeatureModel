@@ -1,0 +1,45 @@
+{
+          "name": "Feature Model File",
+          "noeud":
+            {
+              "name": "Search_engine",
+              "relationship" : "incesseurs",
+              "mandatory": false,
+              "noeuds": [
+                { "name": "page_translation", "mandatory": false},
+
+
+
+                { "name": "doc_type",
+                  "mandatory": true,
+                  "relationship" : "incesseurs",
+                  "noeuds": [
+                    { "mandatory": true, "name": "html" },
+                    {
+                      "name": "image",
+                      "relationship" : "OR",
+                      "mandatory": false,
+                      "noeuds": [
+                        { "mandatory": false, "name": "gif" },
+                        { "mandatory": false, "name": "svg" }
+                      ]
+                    },
+                    { "mandatory": false, "name": "video" }
+                  ]
+                },
+
+                { "name": "search_by_lang",
+                  "mandatory": false,
+                  "relationship" : "XOR",
+                  "noeuds": [
+                    { "mandatory": false, "name": "Spanish" },
+                    { "mandatory": false, "name": "English" },
+                    { "mandatory": false, "name": "French" }
+                  ]
+                },
+                { "name": "page_preview", "mandatory": false}
+              ]
+            }
+
+}
+  

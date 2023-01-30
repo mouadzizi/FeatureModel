@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="commons-cli-1.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../SAT4J/commons-cli-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../SAT4J/org.sat4j.core-2.3.1-tests.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../SAT4J/org.sat4j.core-2.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../SAT4J/org.sat4j.maxsat-2.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../SAT4J/org.sat4j.pb-2.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

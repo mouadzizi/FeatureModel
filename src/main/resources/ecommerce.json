@@ -1,0 +1,31 @@
+{
+          "name": "Feature Model File",
+          "noeud":
+            {
+              "name": "e_commerce",
+              "relationship" : "incesseurs",
+              "mandatory": false,
+              "noeuds": [
+                { "name": "catalog",
+                  "mandatory": true,
+                  "relationship" : "OR",
+                  "noeuds": [
+                    { "mandatory": false, "name": "grid" },
+                    { "mandatory": false, "name": "list" }
+                  ]
+                },
+
+                { "name": "payment_method",
+                  "mandatory": false,
+                  "relationship" : "XOR",
+                  "noeuds": [
+                    { "mandatory": false, "name": "credit_card" },
+                    { "mandatory": false, "name": "check" }
+                  ]
+                },
+                { "name": "basket", "mandatory": false}
+              ]
+            }
+
+}
+  
