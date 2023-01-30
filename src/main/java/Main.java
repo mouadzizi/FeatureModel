@@ -53,7 +53,7 @@ public class Main {
         System.out.println("this is the formula after :" + generatedF);
         System.out.println("\n \n -----------------------------------");
         System.out.println("this is the formula after :" + BooleanExpression);
-        //VerificationManualRunTime(BooleanExpression);
+        VerificationManualRunTime(BooleanExpression);
     }
     public static void VerificationManualRunTime(String BooleanExpression)
     {
