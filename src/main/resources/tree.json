@@ -39,7 +39,8 @@
                 },
                 { "name": "page_preview", "mandatory": false}
               ]
-            }
+            },
+
 
 }
   

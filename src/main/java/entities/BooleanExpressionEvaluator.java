@@ -19,7 +19,10 @@ public class BooleanExpressionEvaluator {
                 operators.push(String.valueOf(c));
             } else if (c == ')') {
                 while (!operators.peek().equals("(")) {
-                    values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
+                    if(operators.peek().equals("NOT")) {
+                        values.push(applyOperator(operators.pop(), false, values.pop()));
+                    } else
+                        values.push(applyOperator(operators.pop(), values.pop(), values.pop()));
                 }
                 operators.pop();
             } else if (c == '-' && i + 1 < expression.length() && expression.charAt(i + 1) == '>') {

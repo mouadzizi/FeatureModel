@@ -2,10 +2,13 @@ package entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Arrays;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class Noeud {
 	private String name;
+	private boolean isTrue;
 	private String relationship;
 	private Noeud noeuds[];
 	private Noeud father;
@@ -52,6 +55,14 @@ public class Noeud {
 		this.visited = visited;
 	}
 
+	public boolean isTrue() {
+		return isTrue;
+	}
+
+	public void setTrue(boolean aTrue) {
+		isTrue = aTrue;
+	}
+
 	public Noeud(String name, String relationship, Noeud[] noeuds, Noeud father) {
 		super();
 		this.name = name;
@@ -64,4 +75,14 @@ public class Noeud {
 		super();
 	}
 
+	@Override
+	public String toString() {
+		return "Noeud{" +
+				"name='" + name + '\'' +
+				", isTrue=" + isTrue +
+				", relationship='" + relationship + '\'' +
+				", noeuds=" + Arrays.toString(noeuds) +
+				", mandatory=" + mandatory +
+				'}';
+	}
 }

@@ -4,10 +4,7 @@ import entities.Noeud;
 import entities.Root;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +13,8 @@ public class Main {
     private static Set<String> generatedFormulas = new HashSet<>();
     //In order to check if the annotation is Boolean Formula, we created a String with all formula inside.
     private static String generatedF = "";
+
+    private static Scanner _scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException {
         // create an object mapper
@@ -27,7 +26,7 @@ public class Main {
         //String
         String BooleanExpression = "";
         // read the JSON file and parse it into a Root object
-        File jsonFile = new File("C:/Users/Admin/IdeaProjects/FeatureModel/src/main/resources/tree.json");
+        File jsonFile = new File("C:/Users/moadz/OneDrive/Documents/GitHub/FeatureModel/src/main/resources/ecommerce.json");
         // read the Root
         Root root = mapper.readValue(jsonFile, Root.class);
         //for the relationship XOR, OR and REQUIRED, we need to know the parent and childs, so i did set the parent first for each node
@@ -35,29 +34,92 @@ public class Main {
         //function of (dfs Depth-first search )
         dfs(root.getNoeud());
         //Add the last root to the formula
-        generatedF+="( " + root.getNoeud().getName() + " ) AND True";
+        generatedF+= "(" + root.getNoeud().getName() + " )";
 
-        /*
+        checkPreAssert(root.getNoeud());
+
         System.out.print("Enter you constraint please: ");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
-        scanner.close();
-        generatedF+=" AND (" + input + ")";
-        scanner.close();
-        */
+
+        //String input = _scanner.nextLine();
+        //generatedF+=" AND (" + input + ")";
 
         nodes = findAllNodes(generatedF);
-        combination = manualCombination(generatedF, nodes);
+        combination = manualCombination(root, generatedF, nodes);
+        _scanner.close();
+        boolean check = checkPostAssert(root.getNoeud());
+        if (!check) return;
+
         BooleanExpression = trueBoolean(generatedF, nodes, combination);
         System.out.println("\n \n -----------------------------------");
-        System.out.println("this is the formula after :" + generatedF);
+        System.out.println("this is the formula before :" + generatedF);
         System.out.println("\n \n -----------------------------------");
         System.out.println("this is the formula after :" + BooleanExpression);
         VerificationManualRunTime(BooleanExpression);
     }
+
+    private static void checkPreAssert(Noeud noeud) {
+        if (noeud.getMandatory()) {
+            System.out.println("\n-----------------------------------");
+            System.out.println(noeud.getName() + " is mandatory so it must be true.");
+        }
+        if ("OR".equals(noeud.getRelationship())) {
+            long trueNoeuds = Arrays.stream(noeud.getNoeuds()).filter(Noeud::isTrue).count();
+            if (trueNoeuds == 0) {
+                System.out.println("\n-----------------------------------");
+                System.out.println(noeud.getName() + " relationship = OR so at least one of his childs should be true.");
+            }
+        }
+        if ("XOR".equals(noeud.getRelationship())) {
+            long trueNoeuds = Arrays.stream(noeud.getNoeuds()).filter(Noeud::isTrue).count();
+            if (trueNoeuds != 1) {
+                System.out.println("\n-----------------------------------");
+                System.out.println(noeud.getName() + " relationship = XOR so just one of his childs should be true.");
+            }
+        }
+
+        if (noeud.getNoeuds() == null || noeud.getNoeuds().length == 0) return;
+        for (Noeud child : noeud.getNoeuds()) {
+            checkPreAssert(child);
+        }
+
+    }
+
+    private static boolean checkPostAssert(Noeud noeud) {
+        if (noeud.getMandatory() && !noeud.isTrue()) {
+            System.out.println("\n-----------------------------------");
+            System.out.println(noeud.getName() + " is mandatory so it must be true.");
+            return false;
+        }
+        if (noeud.isTrue()) {
+            if ("OR".equals(noeud.getRelationship())) {
+                long trueNoeuds = Arrays.stream(noeud.getNoeuds()).filter(Noeud::isTrue).count();
+                if (trueNoeuds == 0) {
+                    System.out.println("\n-----------------------------------");
+                    System.out.println(noeud.getName() + " relationship = OR so at least one of his childs should be true.");
+                    return false;
+                }
+            }
+            if ("XOR".equals(noeud.getRelationship())) {
+                long trueNoeuds = Arrays.stream(noeud.getNoeuds()).filter(Noeud::isTrue).count();
+                if (trueNoeuds != 1) {
+                    System.out.println("\n-----------------------------------");
+                    System.out.println(noeud.getName() + " relationship = XOR so just one of his childs should be true.");
+                    return false;
+                }
+            }
+        }
+
+        if (noeud.getNoeuds() == null || noeud.getNoeuds().length == 0) return true;
+        for (Noeud child : noeud.getNoeuds()) {
+            boolean check = checkPostAssert(child);
+            if(!check) return false;
+        }
+        return true;
+    }
+
     public static void VerificationManualRunTime(String BooleanExpression)
     {
-        boolean result = BooleanExpressionEvaluator.evaluateExpression("((False -> (False OR False)) AND False) -> True");
+        boolean result = BooleanExpressionEvaluator.evaluateExpression(BooleanExpression);
         System.out.println("Expression is valid: " + result);
     }
 
@@ -86,20 +148,21 @@ public class Main {
         return variables;
     }
 
-    public static ArrayList<Boolean> manualCombination (String formula, ArrayList<String> nodes){
-        Scanner scanner = new Scanner(System.in);
+    public static ArrayList<Boolean> manualCombination (Root root, String formula, ArrayList<String> nodes){
         ArrayList<Boolean> Booleanvariables = new ArrayList<>();
         for (String variableName : nodes) {
             System.out.println("Please give me the " + variableName + "(true or false) : ");
-            String userInputString = scanner.nextLine();
+            String userInputString = _scanner.nextLine();
+            Noeud noeud = root.getNoeudByName(root.getNoeud(), variableName);
             if (userInputString.equalsIgnoreCase("true") || userInputString.equalsIgnoreCase("false")) {
                 Boolean userInput = Boolean.parseBoolean(userInputString);
                 Booleanvariables.add(userInput);
+                noeud.setTrue(userInput);
             } else {
                 Booleanvariables.add(false);
+                noeud.setTrue(false);
             }
         }
-        scanner.close();
         return Booleanvariables;
     }
 
@@ -120,28 +183,27 @@ public class Main {
         if (noeud.getFather() != null) {
             if(noeud.getMandatory()){
                 String formula = printOMandatoryExpression(noeud);
-
                 if (generatedFormulas.add(formula)) {
-                    generatedF+=formula;
+                    generatedF+= formula ;
                     System.out.println(formula);
                 }
             }
             if ("OR".equals(noeud.getFather().getRelationship())) {
                 String formula = printOrExpression(noeud);
                 if (generatedFormulas.add(formula)) {
-                    generatedF+=formula;
+                    generatedF+= formula ;
                     System.out.println(formula);
                 }
             } else if ("XOR".equals(noeud.getFather().getRelationship())) {
                 String formula = printXorExpression(noeud);
                 if (generatedFormulas.add(formula)) {
-                    generatedF+=formula;
+                    generatedF+= formula ;
                     System.out.println(formula);
                 }
             } else {
-                String formula = noeud.getName() +" -> "+ noeud.getFather().getName()+ " AND ";
+                String formula = "("  + noeud.getName() +" -> "+ noeud.getFather().getName()+ ") AND ";
                 if (generatedFormulas.add(formula)) {
-                    generatedF+=formula;
+                    generatedF+= formula ;
                     System.out.println(formula);
                 }
             }
@@ -156,43 +218,36 @@ public class Main {
     }
 
     public static String printOMandatoryExpression(Noeud noeud) {
-        String result =  noeud.getFather().getName() +" -> " + noeud.getName() + " AND "  ;
+        String result = "(" +  noeud.getFather().getName() + " -> " + noeud.getName() + ") AND "  ;
         return result;
     }
 
     public static String printOrExpression(Noeud noeud) {
-        System.out.println(noeud.getName() +" -> "+ noeud.getFather().getName()+ " AND ");
-        String result = noeud.getFather().getName() +" -> (";
+        String result =  "(" + noeud.getFather().getName() +" -> (";
         int i = 0;
         for (i = 0; i < noeud.getFather().getNoeuds().length - 1; i++) {
             result += noeud.getFather().getNoeuds()[i].getName() + " OR ";
         }
-        result += noeud.getFather().getNoeuds()[i].getName() +") AND ";
-        return result;
+        result += noeud.getFather().getNoeuds()[i].getName() +")) AND ";
+        return result  ;
     }
 
     public static String printXorExpression(Noeud noeud) {
-        // to print child->parent
-        System.out.println(noeud.getName() +" -> "+ noeud.getFather().getName()+ " AND");
-
         //to print XOR relationship p-> 1 to 1 (g..gn) p->[(g1 AND NOTg2 AND ... NOTgn) OR .. ]
-        String result = noeud.getFather().getName() +" -> (";
+        String result = "(" +  noeud.getFather().getName() +" -> (";
         int max = noeud.getFather().getNoeuds().length -1 ;
         for (int i = 0; i < max+1; i++) {
             result += " ( " + noeud.getFather().getNoeuds()[i].getName() + " ";
-
             for (int j = 0; j < noeud.getFather().getNoeuds().length ; j++) {
                 if(i!=j)
-                    result += "AND (NOT " + noeud.getFather().getNoeuds()[j].getName() + ") ";
-
+                    result += "AND (NOT " + noeud.getFather().getNoeuds()[j].getName() + ")";
             }
-
             if (i==max){
                 result += ") ";
             } else result += ") OR";
         }
-        result += ")";
-        return result;
+        result+= "))";
+        return result + " AND ";
     }
 
 }
