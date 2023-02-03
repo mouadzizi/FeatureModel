@@ -1,8 +1,6 @@
-package entities;
-
 import java.util.Stack;
 
-public class BooleanExpressionEvaluator {
+public class RunTimeChecker {
     private static final String OR = "OR";
     private static final String AND = "AND";
     private static final String NOT = "NOT";
