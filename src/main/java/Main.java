@@ -82,7 +82,40 @@ public class Main {
             }
         }
         else{
-            System.out.println("3- Dynamic validation");
+            nodes = findAllNodes(generatedF);
+            ArrayList<ArrayList<Boolean>> result = new ArrayList<>();
+            result = BooleanCombinationGenerator.generateCombinations(nodes);
+
+            ArrayList<ArrayList<Boolean>> trueList = new ArrayList<>();
+            ArrayList<ArrayList<String>> possibleCombination = new ArrayList<>();
+
+            for (ArrayList<Boolean> innerList : result) {
+                BooleanExpression = trueBoolean(generatedF, nodes, innerList);
+                if (RunTimeChecker.evaluateExpression(BooleanExpression)) {
+                    trueList.add(innerList);
+                    ArrayList<String> temp = new ArrayList<>();
+                    for (int i = 0; i < nodes.size(); i++) {
+                        temp.add(nodes.get(i) + "=" + innerList.get(i));
+                    }
+                    possibleCombination.add(temp);
+                }
+            }
+
+            System.out.println("there is "+ trueList.size() + " possible configuration :");
+            System.out.println("\n -----------------------------------------------------");
+
+            for (List<String> innerList : possibleCombination) {
+                System.out.print("[");
+                for (String value : innerList) {
+                    System.out.print(value + ", ");
+                }
+                System.out.println("]");
+            }
+
+
+
+
+
         }
 
     }
