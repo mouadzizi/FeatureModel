@@ -17,7 +17,7 @@
                     { "mandatory": true, "name": "html" },
                     {
                       "name": "image",
-                      "relationship" : "OR",
+                      "relationship" : "XOR",
                       "mandatory": false,
                       "noeuds": [
                         { "mandatory": false, "name": "gif" },
@@ -30,7 +30,7 @@
 
                 { "name": "search_by_lang",
                   "mandatory": false,
-                  "relationship" : "XOR",
+                  "relationship" : "OR",
                   "noeuds": [
                     { "mandatory": false, "name": "Spanish" },
                     { "mandatory": false, "name": "English" },

@@ -8,7 +8,7 @@
               "noeuds": [
                 { "name": "catalog",
                   "mandatory": true,
-                  "relationship" : "OR",
+                  "relationship" : "XOR",
                   "noeuds": [
                     { "mandatory": false, "name": "grid" },
                     { "mandatory": false, "name": "list" }
@@ -17,7 +17,7 @@
 
                 { "name": "payment_method",
                   "mandatory": false,
-                  "relationship" : "XOR",
+                  "relationship" : "OR",
                   "noeuds": [
                     { "mandatory": false, "name": "credit_card" },
                     { "mandatory": false, "name": "check" }

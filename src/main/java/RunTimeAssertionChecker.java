@@ -6,8 +6,6 @@ public class RunTimeAssertionChecker {
 
     public static void checkPreAssert(Noeud noeud) {
         if (noeud.getMandatory()) {
-            System.out.println("\n \n-----------------------------------------------------");
-            System.out.println("This is your Preconditions you need to respect all of them or your model won't be acceptable");
             System.out.println("-----------------------------------------------------");
             System.out.println(noeud.getName() + " is mandatory so it must be true.");
         }

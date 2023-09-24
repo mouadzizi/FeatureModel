@@ -30,7 +30,7 @@ public class Main {
         String BooleanExpression = "";
 
         // read the JSON file and parse it into a Root object
-        File jsonFile = new File("C:/Users/moadz/OneDrive/Documents/GitHub/FeatureModel/src/main/resources/ecommerce.json");
+        File jsonFile = new File("C:/Users/moadz/OneDrive/Documents/GitHub/FeatureModel/src/main/resources/tree.json");
 
         // read the Root
         Root root = mapper.readValue(jsonFile, Root.class);
@@ -68,7 +68,11 @@ public class Main {
             VerificationManualRunTime(BooleanExpression);
 
         } else if (choiceInt == 2) {
+            System.out.println("-----------------------------------------------------");
             System.out.println("you choosed to check by Contract & assertion at runtime");
+            System.out.println("-----------------------------------------------------");
+            System.out.println("This is your Preconditions you need to respect all of them or your model won't be acceptable");
+            System.out.println("\n -----------------------------------------------------");
             RunTimeAssertionChecker.checkPreAssert(root.getNoeud());
             nodes = findAllNodes(generatedF);
             combination = manualCombination(root, generatedF, nodes);
@@ -100,9 +104,12 @@ public class Main {
                     possibleCombination.add(temp);
                 }
             }
-
-            System.out.println("there is "+ trueList.size() + " possible configuration :");
             System.out.println("\n -----------------------------------------------------");
+            System.out.println("there is "+ result.size() + " possible configuration :");
+            System.out.println("-----------------------------------------------------");
+            System.out.println("Only "+ trueList.size() + " are Valid configuration :");
+            System.out.println("-----------------------------------------------------");
+            System.out.println("This is all the configuration accepted according to your Feature Model ");
 
             for (List<String> innerList : possibleCombination) {
                 System.out.print("[");
@@ -124,7 +131,7 @@ public class Main {
     public static void VerificationManualRunTime(String BooleanExpression)
     {
         boolean result = RunTimeChecker.evaluateExpression(BooleanExpression);
-        String formula = true ? "Valide" : "False";
+        String formula = result ? "Valide" : "Not Valide";
         System.out.println("you Feature Model is : " + formula);
     }
 
@@ -190,26 +197,22 @@ public class Main {
                 String formula = printOMandatoryExpression(noeud);
                 if (generatedFormulas.add(formula)) {
                     generatedF+= formula ;
-                    System.out.println(formula);
                 }
             }
             if ("OR".equals(noeud.getFather().getRelationship())) {
                 String formula = printOrExpression(noeud);
                 if (generatedFormulas.add(formula)) {
                     generatedF+= formula ;
-                    System.out.println(formula);
                 }
             } else if ("XOR".equals(noeud.getFather().getRelationship())) {
                 String formula = printXorExpression(noeud);
                 if (generatedFormulas.add(formula)) {
                     generatedF+= formula ;
-                    System.out.println(formula);
                 }
             } else {
                 String formula = "("  + noeud.getName() +" -> "+ noeud.getFather().getName()+ ") AND ";
                 if (generatedFormulas.add(formula)) {
                     generatedF+= formula ;
-                    System.out.println(formula);
                 }
             }
         }
